@@ -1,7 +1,7 @@
 export enum Equipment {
-  None = 0,
-  PC = 1,
-  Laptop = 2,
+  None,
+  PC,
+  Laptop,
 }
 
 export enum ActivityType {
@@ -15,7 +15,13 @@ export enum ActivityType {
 
 export enum CourseLevel {
   First = 1,
-  Second = 2,
-  Third = 3,
-  Fourth = 4,
+  Second,
+  Third,
+  Fourth,
+}
+
+export enum DisciplineTemplate {
+  BasicsOfProgramming = 1,
+  AlgorithmsAndDataStructures,
+  OOP,
 }

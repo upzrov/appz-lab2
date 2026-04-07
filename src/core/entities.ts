@@ -1,4 +1,9 @@
-import { ActivityType, CourseLevel, Equipment } from "./enums";
+import {
+  ActivityType,
+  CourseLevel,
+  DisciplineTemplate,
+  Equipment,
+} from "./enums";
 
 import type { IUniversityMember } from "./interfaces";
 
@@ -29,7 +34,8 @@ export class Student implements IUniversityMember {
   }
 
   public updateProfile(name: string, equipment: Equipment): void {
-    if (name.trim() === "") throw new Error("Student name cannot be empty");
+    if (name.trim() === "") throw new Error("Student name cannot be empty.");
+
     this._name = name;
     this._equipment = equipment;
   }
@@ -66,7 +72,8 @@ export class Teacher implements IUniversityMember {
   }
 
   public updateName(name: string): void {
-    if (name.trim() === "") throw new Error("Teacher name cannot be empty");
+    if (name.trim() === "") throw new Error("Teacher name cannot be empty.");
+
     this._name = name;
   }
 
@@ -76,7 +83,7 @@ export class Teacher implements IUniversityMember {
       this._activeDisciplineName !== disciplineName
     ) {
       throw new Error(
-        `Teacher is already teaching ${this._activeDisciplineName}`,
+        `Teacher is already teaching ${this._activeDisciplineName}.`,
       );
     }
     this._activeDisciplineName = disciplineName;
@@ -104,7 +111,7 @@ export class Group {
 
   public addStudent(student: Student): void {
     if (this.students.has(student.id))
-      throw new Error("Student already in group");
+      throw new Error("Student already in group.");
     this.students.set(student.id, student);
   }
 
@@ -129,7 +136,10 @@ export class Subgroup {
 
   public setStudents(studentsList: Student[]): void {
     if (studentsList.length < 10)
-      throw new Error(`Subgroup must have at least 10 students.`);
+      throw new Error(
+        `Subgroup must have at least 10 students. Provided: ${studentsList.length}`,
+      );
+
     this.students.clear();
     for (const s of studentsList) this.students.set(s.id, s);
   }
@@ -178,7 +188,7 @@ export class Discipline {
 
   private validateHours(hours: number): void {
     if (hours < 64)
-      throw new Error(`Discipline ${this.name} must have at least 64 hours`);
+      throw new Error(`Discipline '${this.name}' must have at least 64 hours.`);
   }
 
   public addActivity(activity: DisciplineActivity): void {
@@ -189,7 +199,7 @@ export class Discipline {
     const maxTeachers = subgroupsCount + 1;
     if (this.teachers.size >= maxTeachers && !this.teachers.has(teacher.id)) {
       throw new Error(
-        `Max allowed teachers (${maxTeachers}) reached for ${this.name}`,
+        `Max allowed teachers (${maxTeachers}) reached for '${this.name}'.`,
       );
     }
     teacher.assignDiscipline(this.name);
@@ -213,16 +223,48 @@ export class Discipline {
 }
 
 export class DisciplineFactory {
-  public static createOOP(): Discipline {
-    const d = new Discipline(
-      "OOP",
-      [CourseLevel.First, CourseLevel.Second],
-      120,
-      false,
-      true,
-    );
-    d.addActivity(new DisciplineActivity(ActivityType.Lecture, 40));
-    d.addActivity(new DisciplineActivity(ActivityType.Lab, 40));
-    return d;
+  public static createDiscipline(template: DisciplineTemplate): Discipline {
+    switch (template) {
+      case DisciplineTemplate.BasicsOfProgramming: {
+        const d = new Discipline(
+          "Basics of Programming",
+          [CourseLevel.First],
+          72,
+          true,
+          false,
+        );
+        d.addActivity(new DisciplineActivity(ActivityType.Lecture, 36));
+        d.addActivity(new DisciplineActivity(ActivityType.Lab, 36));
+        return d;
+      }
+      case DisciplineTemplate.AlgorithmsAndDataStructures: {
+        const d = new Discipline(
+          "Algorithms and Data Structures",
+          [CourseLevel.Second],
+          90,
+          false,
+          true,
+        );
+        d.addActivity(new DisciplineActivity(ActivityType.Lecture, 30));
+        d.addActivity(new DisciplineActivity(ActivityType.Lab, 30));
+        d.addActivity(new DisciplineActivity(ActivityType.Coursework, 30));
+        return d;
+      }
+      case DisciplineTemplate.OOP: {
+        const d = new Discipline(
+          "OOP",
+          [CourseLevel.First, CourseLevel.Second],
+          120,
+          false,
+          true,
+        );
+        d.addActivity(new DisciplineActivity(ActivityType.Lecture, 40));
+        d.addActivity(new DisciplineActivity(ActivityType.Lab, 40));
+        d.addActivity(new DisciplineActivity(ActivityType.Coursework, 40));
+        return d;
+      }
+      default:
+        throw new Error("Unknown discipline template.");
+    }
   }
 }
