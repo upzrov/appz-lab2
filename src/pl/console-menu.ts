@@ -270,7 +270,10 @@ export class ConsoleMenu {
     console.log("\nOPERATIONS");
     console.log("1. Assign Teacher to Discipline");
     console.log("2. Conduct Lab Work");
+    console.log("3. Conduct MCW (Modular Control Work)");
+    console.log("4. Conduct Exam");
     const opt = await this.prompt("Select: ");
+
     if (opt === "1") {
       const tid = await this.prompt("Teacher ID: ");
       const dName = await this.prompt("Discipline Name: ");
@@ -279,6 +282,14 @@ export class ConsoleMenu {
       const sid = await this.prompt("Student ID: ");
       const dname = await this.prompt("Discipline Name: ");
       this.service.operations.conductLabWork(sid, dname);
+    } else if (opt === "3") {
+      const sid = await this.prompt("Student ID: ");
+      const dname = await this.prompt("Discipline Name: ");
+      this.service.operations.conductMCW(sid, dname);
+    } else if (opt === "4") {
+      const sid = await this.prompt("Student ID: ");
+      const dname = await this.prompt("Discipline Name: ");
+      this.service.operations.conductExam(sid, dname);
     }
   }
 }

@@ -30,7 +30,18 @@ export class Student implements IUniversityMember {
   }
 
   public getDetails(): string {
-    return `[${this.role}] ${this.name} | Equipment: ${Equipment[this.equipment]} | Works: ${this._passedWorks}`;
+    return `[${this.role}] ${this.name}, equipment: ${Equipment[this.equipment]}, works: ${this._passedWorks}`;
+  }
+
+  public get passedMCW(): boolean {
+    return this._passedMCW;
+  }
+  public get passedExam(): boolean {
+    return this._passedExam;
+  }
+
+  public completeMCW(): void {
+    this._passedMCW = true;
   }
 
   public updateProfile(name: string, equipment: Equipment): void {
@@ -68,7 +79,7 @@ export class Teacher implements IUniversityMember {
     const teaching = this._activeDisciplineName
       ? `Teaching: ${this._activeDisciplineName}`
       : "Not assigned";
-    return `[${this.role}] ${this.name} | ${teaching}`;
+    return `[${this.role}] ${this.name}, ${teaching}`;
   }
 
   public updateName(name: string): void {

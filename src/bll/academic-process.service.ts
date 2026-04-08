@@ -83,4 +83,76 @@ export class AcademicProcessService {
       ),
     );
   }
+
+  public conductMCW(studentId: string, disciplineName: string): void {
+    const student = this.db.students.get(studentId);
+    if (!student) throw new Error(`Student with ID '${studentId}' not found.`);
+    const discipline = this.db.disciplines.get(disciplineName);
+    if (!discipline)
+      throw new Error(`Discipline '${disciplineName}' not found.`);
+
+    if (student.passedWorks < 1) {
+      this.activityNotifier.notify(
+        new StudentActivityEventArgs(
+          student.name,
+          ActivityType.MCW,
+          false,
+          "Cannot take MCW. Not enough lab works passed.",
+        ),
+      );
+      return;
+    }
+
+    student.completeMCW();
+    this.activityNotifier.notify(
+      new StudentActivityEventArgs(
+        student.name,
+        ActivityType.MCW,
+        true,
+        "MCW passed successfully.",
+      ),
+    );
+  }
+
+  public conductExam(studentId: string, disciplineName: string): void {
+    const student = this.db.students.get(studentId);
+    if (!student) throw new Error(`Student with ID '${studentId}' not found.`);
+    const discipline = this.db.disciplines.get(disciplineName);
+    if (!discipline)
+      throw new Error(`Discipline '${disciplineName}' not found.`);
+
+    if (!discipline.hasExam) {
+      this.activityNotifier.notify(
+        new StudentActivityEventArgs(
+          student.name,
+          ActivityType.Exam,
+          false,
+          `Discipline '${discipline.name}' does not require an exam (Credit only).`,
+        ),
+      );
+      return;
+    }
+
+    if (!student.passedMCW) {
+      this.activityNotifier.notify(
+        new StudentActivityEventArgs(
+          student.name,
+          ActivityType.Exam,
+          false,
+          "Not admitted to exam. MCW is not passed.",
+        ),
+      );
+      return;
+    }
+
+    student.completeExam();
+    this.activityNotifier.notify(
+      new StudentActivityEventArgs(
+        student.name,
+        ActivityType.Exam,
+        true,
+        "Exam passed successfully!",
+      ),
+    );
+  }
 }
